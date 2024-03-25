@@ -23,6 +23,10 @@ public:
     {
         return name == s.name;
     }
+    bool isInitialState()
+    {
+        return isInitial;
+    }
 };
 
 class DFA
@@ -43,7 +47,17 @@ public:
     }
     states.push_back(state);
  }
-
+ State getInitialState()
+ {
+     for (list<State>::iterator i = states.begin(); i != states.end(); i++)
+    {
+        if( i->isInitialState()){
+            return *i;
+        }
+    }
+    cout<<"No initial state found";
+ }
+ 
 
 
 
