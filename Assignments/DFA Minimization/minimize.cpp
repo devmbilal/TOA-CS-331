@@ -27,6 +27,10 @@ public:
     {
         return isInitial;
     }
+    bool isAcceptingState()
+    {
+        return isAccepting;
+    }
 };
 
 class DFA
@@ -58,7 +62,18 @@ public:
     cout<<"No initial state found";
  }
  
-
+ list<State> getAcceptingStates()
+ {
+     list<State> acceptingStates;
+     for (list<State>::iterator i = states.begin(); i != states.end(); i++)
+    {
+        if( i->isAcceptingState()){
+            acceptingStates.push_back(*i);
+        }
+    }
+    return acceptingStates;
+ }
+ 
 
 
 
