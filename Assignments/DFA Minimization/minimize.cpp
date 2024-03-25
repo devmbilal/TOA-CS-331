@@ -1,10 +1,10 @@
 #include<iostream>
 using namespace std;
 #include<fstream>
-#include <map>
+#include<map>
 #include<list>
-#include <sstream>
-#include <vector>
+#include<sstream>
+#include<vector>
 
 class State
 {
@@ -12,23 +12,26 @@ private:
     string name;
     bool isInitial;
     bool isAccepting;
-    map <char, string> transitions;
+    map <string, string> transitions;
 public:
-    State(string name, bool isInitial, bool isAccepting , map <char,string> transitions)
+    State(string name, bool isInitial, bool isAccepting , map <string,string> transitions)
     {
         this->name = name;
         this->isInitial = isInitial;
         this->isAccepting = isAccepting;
         this->transitions = transitions;
     }
+
     bool operator==(const State& s) const
     {
         return name == s.name;
     }
+
     bool isInitialState()
     {
         return isInitial;
     }
+
     bool isAcceptingState()
     {
         return isAccepting;
@@ -52,6 +55,7 @@ public:
     }
     states.push_back(state);
  }
+
  State getInitialState()
  {
      for (list<State>::iterator i = states.begin(); i != states.end(); i++)
@@ -62,7 +66,7 @@ public:
     }
     cout<<"No initial state found";
  }
- 
+
  list<State> getAcceptingStates()
  {
      list<State> acceptingStates;
@@ -74,6 +78,17 @@ public:
     }
     return acceptingStates;
  }
+
+list<State> getNonAcceptingStates(){
+    list<State> nonAcceptingStates;
+    for (list<State>::iterator i = states.begin(); i != states.end(); i++)
+    {
+        if( !i->isAcceptingState()){
+            nonAcceptingStates.push_back(*i);
+        }
+    }
+    return nonAcceptingStates;
+}
 
  void readFromFile(string fileName)
 {
@@ -87,7 +102,7 @@ public:
     }
     string line;
     int lineNumber = 0;
-    vector<char> symbols;
+    vector<string> symbols;
     // Read file line by line
     while (getline(file,line))
     {
@@ -100,7 +115,7 @@ public:
             getline(stringStream, linePart,',');
             while(getline(stringStream, linePart,','))
             {
-                symbols.push_back(linePart[0]);
+                symbols.push_back(linePart);
             } 
             continue;      
         }
@@ -130,7 +145,7 @@ public:
       
 
        // Create a map for the transitions
-        map<char,string> transitionMap;
+        map<string,string> transitionMap;
         for (int i = 0; i < symbols.size(); i++) {
             transitionMap[symbols[i]] = transitions[i+1];
         }
@@ -143,7 +158,8 @@ public:
 
     }
 }
-  
+
+
 
 };
 
