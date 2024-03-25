@@ -2,6 +2,7 @@
 using namespace std;
 #include<fstream>
 #include <map>
+#include<list>
 
 class State
 {
@@ -18,7 +19,38 @@ public:
         this->isAccepting = isAccepting;
         this->transitions = transitions;
     }
+    bool operator==(const State& s) const
+    {
+        return name == s.name;
+    }
 };
+
+class DFA
+{
+private:
+        list<State> states;
+public:
+ DFA(/* args */);
+
+ void addState(State state)
+ { 
+    for (list<State>::iterator i = states.begin(); i != states.end(); i++)
+    {
+        if( *i == state){
+            cout<<"State already exists";
+            return;
+        }
+    }
+    states.push_back(state);
+ }
+
+
+
+
+
+};
+
+
 
 
 
