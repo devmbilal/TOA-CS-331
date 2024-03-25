@@ -3,6 +3,8 @@ using namespace std;
 #include<fstream>
 #include <map>
 #include<list>
+#include <sstream>
+#include <vector>
 
 class State
 {
@@ -12,7 +14,7 @@ private:
     bool isAccepting;
     map <char, string> transitions;
 public:
-    State(string name, bool isInitial, bool isAccepting , map <char, string> transitions)
+    State(string name, bool isInitial, bool isAccepting , map <char,string> transitions)
     {
         this->name = name;
         this->isInitial = isInitial;
@@ -38,7 +40,6 @@ class DFA
 private:
         list<State> states;
 public:
- DFA(/* args */);
 
  void addState(State state)
  { 
@@ -73,12 +74,78 @@ public:
     }
     return acceptingStates;
  }
- 
 
+ void readFromFile(string fileName)
+{
+    // Check if file exists
+    ifstream file;
+    file.open(fileName);
+    if (!file)
+    {
+        cout << "File not Found";
+        return;
+    }
+    string line;
+    int lineNumber = 0;
+    vector<char> symbols;
+    // Read file line by line
+    while (getline(file,line))
+    {
+        lineNumber++;
+        //Header line 
+        if (lineNumber == 1)
+        {
+            istringstream stringStream(line);
+            string linePart;
+            getline(stringStream, linePart,',');
+            while(getline(stringStream, linePart,','))
+            {
+                symbols.push_back(linePart[0]);
+            } 
+            continue;      
+        }
 
+      // Read the states
+      bool isInitial = false;
+      bool isAccepting = false;
+
+        if (line[0] == 'i') {
+            isInitial = true;
+            line = line.substr(2);  
+        }
+
+        if (line[0] == '*') {
+            isAccepting = true;
+            line = line.substr(2); 
+        }
+
+        istringstream stringStream(line);
+        string linePart;
+        vector<string> transitions;
+
+        while(getline(stringStream, linePart, ',')) {
+            transitions.push_back(linePart);
+        }
+        
+      
+
+       // Create a map for the transitions
+        map<char,string> transitionMap;
+        for (int i = 0; i < symbols.size(); i++) {
+            transitionMap[symbols[i]] = transitions[i+1];
+        }
+
+        // State Object
+        State state(transitions[0], isInitial, isAccepting,transitionMap);
+
+        // Add the State object to the states list
+        states.push_back(state);
+
+    }
+}
+  
 
 };
-
 
 
 
