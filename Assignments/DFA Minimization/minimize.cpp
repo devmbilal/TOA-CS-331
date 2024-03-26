@@ -184,29 +184,69 @@ public:
         file.close();
 }
 
-void minimize()
-{
-        list<State> minimizedStates;
+void minimize(){
+    list<list<State>> partitions;
+    list<State> acceptingStates = getAcceptingStates();
+    list<State> nonAcceptingStates = getNonAcceptingStates();
 
-        for (State& state : states)
+    partitions.push_back(acceptingStates);
+    partitions.push_back(nonAcceptingStates);
+    
+    bool changed;
+    do
+    {
+        changed = false;
+        list<list<State>> newPartitions;
+
+        for (list<State>& partition : partitions)
         {
-            bool isDuplicate = false;
-            for (State& minimizedState : minimizedStates)
+            map<string, list<list<State>::iterator>> transitionPartitions;
+
+            for (auto it = partition.begin(); it != partition.end(); ++it)
             {
-                if (state == minimizedState)
+                for (auto& transition : it->getTransitions())
                 {
-                    isDuplicate = true;
-                    break;
+                    transitionPartitions[transition.second].push_back(it);
                 }
             }
 
-            if (!isDuplicate)
+            for (auto& transitionPartition : transitionPartitions)
             {
-                minimizedStates.push_back(state);
+                if (transitionPartition.second.size() < partition.size())
+                {
+                    list<State> newPartition;
+                    for (auto it : transitionPartition.second)
+                    {
+                        newPartition.push_back(*it);
+                        partition.erase(it);
+                    }
+                    newPartitions.push_back(newPartition);
+                    changed = true;
+                }
             }
         }
 
-        states = minimizedStates;
+        partitions.insert(partitions.end(), newPartitions.begin(), newPartitions.end());
+    } while (changed);
+
+     states.clear();
+    for (list<State>& partition : partitions)
+    {
+        string name;
+        bool isInitial = false;
+        bool isAccepting = false;
+        map<string, string> transitions;
+
+        for (State& state : partition)
+        {
+            name += state.getName();
+            isInitial |= state.isInitialState();
+            isAccepting |= state.isAcceptingState();
+            transitions = state.getTransitions();  // Assumes all states in the partition have the same transitions.
+        }
+
+        addState(State(name, isInitial, isAccepting, transitions));
+    }
 }
 
 };
