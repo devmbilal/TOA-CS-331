@@ -184,19 +184,30 @@ public:
         file.close();
 }
 
-void minimize(){
-    list<list<State>> partitions;
-    list<State> acceptingStates = getAcceptingStates();
-    list<State> nonAcceptingStates = getNonAcceptingStates();
+void minimize()
+{
+        list<State> minimizedStates;
 
-    partitions.push_back(acceptingStates);
-    partitions.push_back(nonAcceptingStates);
-    
-    
+        for (State& state : states)
+        {
+            bool isDuplicate = false;
+            for (State& minimizedState : minimizedStates)
+            {
+                if (state == minimizedState)
+                {
+                    isDuplicate = true;
+                    break;
+                }
+            }
 
+            if (!isDuplicate)
+            {
+                minimizedStates.push_back(state);
+            }
+        }
 
+        states = minimizedStates;
 }
-
 
 };
 
@@ -207,6 +218,7 @@ int main()
     DFA dfa;
     dfa.readFromFile("dfa.txt");
     dfa.minimize();
+    dfa.writeToFile("minimizedDFA.txt");
     return 0;
 }
 
