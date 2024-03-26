@@ -36,6 +36,16 @@ public:
     {
         return isAccepting;
     }
+
+    string getName()
+    {
+        return name;
+    }
+
+    map<string,string> getTransitions()
+    {
+        return transitions;
+    }
 };
 
 class DFA
@@ -79,7 +89,7 @@ public:
     return acceptingStates;
  }
 
-list<State> getNonAcceptingStates(){
+ list<State> getNonAcceptingStates(){
     list<State> nonAcceptingStates;
     for (list<State>::iterator i = states.begin(); i != states.end(); i++)
     {
@@ -159,11 +169,45 @@ list<State> getNonAcceptingStates(){
     }
 }
 
+ void writeToFile(string fileName)
+{
+        ofstream file(fileName);
+        for (State& state : states)
+        {
+            file << (state.isInitialState() ? "i " : "") << state.getName() << (state.isAcceptingState() ? "*" : "") << ", ";
+            for (auto& transition : state.getTransitions())
+            {
+                file << transition.second << ", ";
+            }
+            file << "\n";
+        }
+        file.close();
+}
+
+void minimize(){
+    list<list<State>> partitions;
+    list<State> acceptingStates = getAcceptingStates();
+    list<State> nonAcceptingStates = getNonAcceptingStates();
+
+    partitions.push_back(acceptingStates);
+    partitions.push_back(nonAcceptingStates);
+    
+    
+
+
+}
 
 
 };
 
 
 
+int main()
+{
+    DFA dfa;
+    dfa.readFromFile("dfa.txt");
+    dfa.minimize();
+    return 0;
+}
 
 
